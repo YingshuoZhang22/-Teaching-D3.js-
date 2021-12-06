@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <script src="d3.min.js"></script> -->
+</head>
+<body>
+    <script>
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", 400)
+            .attr("height", 300);
+
+var line = function(x, y){
+    return d3.svg.line()
+    .x(function(d,i) { return x[i]*50; }) 
+    .y(function(d,i) { return y[i]*50; })
+    (Array(x.length));
+}
+
+var x_array = [1,2,3,4,5,6],
+    y_array = [3,2,4,4,6,1];
+svg.append("path")
+    .attr("d", line(x_array, y_array))
+    .attr("class", "line")
+    .style("stroke", "black" )
+    .attr('fill', 'none');
+
+       
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <script src = "https://d3js.org/d3.v4.min.js"></script>
+      <title> Demo </title>
+      <style>
+          .svg-style {
+                /* background-color: lightblue; */
+                display: block;
+                margin: auto;
+           }
+      </style>
+   </head>
+   <body>
+      
+      <script>
+            var margin = { top: 20, right: 15, bottom: 60, left: 160 };
+            var width = 800, height = 400, border = 1;
+            var rw = 30, rh = 24;
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("class", "svg-style");
+        
+            var data = [];
+            for (var k = 0; k < 4; k += 1) {
+                data.push(d3.range(12));
+            }
+            
+            // create a column of triangle
+            var grp = svg.selectAll('g')
+                .data(data)
+                .enter()
+                .append('g')
+                .attr('transform', function(d, i) { 
+                    // offset from the first column to left bound, 30: verticel offset for each column
+                    return 'translate(31, ' + (30 + 100 * i) + ')'; // 31 is the top margin
+                });
+                
+            // create columns of triangles
+            grp.selectAll('rect')
+                .data(function(d) { return d; })
+                .enter()
+                .append('rect')
+                    .attr('x', function(d, i) {  // draw columns
+                        if (i % 2 == 0) return 130 * i / 2; 
+                        else return 130 * ((i - 1) / 2) + rw + 1;
+                    })  
+                    .attr('width', rw)
+                    .attr('height', rh)
+                    .attr('style', 'fill:none;stroke:gray;stroke-width:1')
+
+            // draw circle (chairs)
+            var circle_data = []
+            for (var k = 0; k < 48; k++)
+                circle_data.push(k);    // in v3.js, must push unique data
+            var circle = svg.selectAll("circle")
+                    .data(circle_data, function (d) { return d; });
+
+            circle.enter().append("circle")
+                .attr("cy", function(d, i) {
+                    console.log(i);
+                    i %= 4;
+                    return  (100 * i + 45 + rh) })
+                .attr("cx", function(d, i) {
+                    i = Math.floor(i / 4);
+                    if (i % 2 == 0) return 130 * i / 2 + 31 + rw/2; 
+                    else return 130 * ((i - 1) / 2) + rw + 1 + 31 + rw/2;
+                })
+                .attr("r", 8)
+                .attr('style', 'fill:gray');
+            
+            // generate points of teachers observation data
+            var points = [], num_points = 500;
+            for (var i = 0; i < num_points; i++) {
+                points[i] = [];
+                points[i][0] = Math.random() * width;
+                points[i][1] = Math.random() * height;
+                points[i][2] = Math.random() * 360;
+            }
+
+            var x_coord = [], y_coord = [];
+            for (var i = 0; i < num_points; i++) {
+                x_coord.push(points[i][0]);
+                y_coord.push(points[i][1]);
+            }
+
+            // draw trajectory
+            var line = function(x, y) {
+                return d3.line()
+                    .x(function(d, i) {return x[i];})
+                    .y(function(d, i) {return y[i];})
+                    (Array(x.length));
+            }
+            svg.append("path")
+                .attr("d", line(x_coord, y_coord))
+                .attr("class", "line")
+                .attr("stroke-width", 0.03)
+                .style("stroke", "purple" )
+                .attr('fill', 'none')
+                .style('opacity', 0.4);
+            
+                // draw triangle Spotlight metaphor
+            for (var i = 0; i < num_points; i++) {
+                svg.append('polygon')
+                    .attr('points', '0,0 15,-45 -15,-45')
+                    // .attr('transform', 'translate(50, 50) rotate(271)') 
+                    .attr('transform', 'translate(' + points[i][0] + ', ' + points[i][1] + ') rotate(' + points[i][2] + ')')
+                    .attr('fill', 'blue')
+                    .style('opacity', 0.05)
+            }
+            
+      </script>
+   </body>
+</html>
